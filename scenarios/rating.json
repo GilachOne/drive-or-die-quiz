@@ -1,0 +1,91 @@
+[
+  {
+    "id": "s1",
+    "type": "text",
+    "next": "s2",
+    "raw": {
+      "value": "Для начала нужно зарегистрироваться."
+    }
+  },
+  {
+    "id": "s2",
+    "type": "script",
+    "name": "Регистрация",
+    "raw": {
+      "script": "0",
+      "script_name": "Главный сценарий"
+    }
+  },
+  {
+    "id": "s3",
+    "type": "condition",
+    "name": "Не содержит Ник?",
+    "conditions": [
+      {
+        "type": "tag_excluded"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Да",
+        "key": "yes",
+        "next": "s1"
+      },
+      {
+        "text": "Нет",
+        "key": "no",
+        "next": "s7"
+      }
+    ]
+  },
+  {
+    "id": "s4",
+    "type": "google_sheet_reader",
+    "raw": {
+      "google_sheet_reader": {
+        "table_uuid": "https://docs.google.com/spreadsheets/d/<SHEET_ID>",
+        "sheet_uuid": "first_rating",
+        "number_from": 2,
+        "count_per_page": 10
+      }
+    },
+    "buttons": [
+      {
+        "text": "Записи не найдены",
+        "key": "not_found"
+      }
+    ]
+  },
+  {
+    "id": "s5",
+    "type": "script",
+    "raw": {
+      "script": "0",
+      "script_name": "Главный сценарий"
+    }
+  },
+  {
+    "id": "s6",
+    "type": "start",
+    "main": true,
+    "next": "s3"
+  },
+  {
+    "id": "s7",
+    "type": "chain",
+    "messages": [
+      {
+        "text": "Общий рейтинг доступен по ссылке в DataLens:\nhttps://datalens.yandex/<DASHBOARD>"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "В главное меню",
+        "next": "s5"
+      },
+      {
+        "text": "Показать личный рейтинг"
+      }
+    ]
+  }
+]

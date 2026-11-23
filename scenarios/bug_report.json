@@ -1,0 +1,186 @@
+[
+  {
+    "id": "s1",
+    "type": "text",
+    "next": "s2",
+    "raw": {
+      "value": "Для начала нужно зарегистрироваться."
+    }
+  },
+  {
+    "id": "s2",
+    "type": "script",
+    "name": "Регистрация",
+    "raw": {
+      "script": "0",
+      "script_name": "Главный сценарий"
+    }
+  },
+  {
+    "id": "s3",
+    "type": "condition",
+    "name": "Не содержит Ник?",
+    "conditions": [
+      {
+        "type": "tag_excluded"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Да",
+        "key": "yes",
+        "next": "s1"
+      },
+      {
+        "text": "Нет",
+        "key": "no",
+        "next": "s10"
+      }
+    ]
+  },
+  {
+    "id": "s4",
+    "type": "chain",
+    "messages": [
+      {
+        "text": "Укажите ссылку на скриншот, по возможности или нажмите \"Продолжить\""
+      }
+    ],
+    "save_answer_to": "bag_scr",
+    "buttons": [
+      {
+        "text": "Продолжить",
+        "next": "s6"
+      },
+      {
+        "text": "Любая другая фраза",
+        "next": "s6"
+      }
+    ]
+  },
+  {
+    "id": "s5",
+    "type": "chain",
+    "messages": [
+      {
+        "text": "Благодарим за обратную связь! Специалист поддержки свяжется с вами после обработки заявки."
+      }
+    ],
+    "save_answer_to": "bag_report",
+    "buttons": [
+      {
+        "text": "В главное меню",
+        "next": "s8"
+      }
+    ]
+  },
+  {
+    "id": "s6",
+    "type": "variable_operation",
+    "name": "дата",
+    "next": "s7",
+    "vars": {
+      "op": "free_value",
+      "var": "Дата",
+      "value": "{{date(\"d.m.Y H:i:s\",\"3 hours\")}}"
+    }
+  },
+  {
+    "id": "s7",
+    "type": "google_sheet_extended_writer",
+    "next": "s5",
+    "raw": {
+      "google_sheet_extended_writer": {
+        "table_uuid": "https://docs.google.com/spreadsheets/d/<SHEET_ID>",
+        "sheet_uuid": "bag_report",
+        "number_from": 2,
+        "map": [
+          {
+            "type": "variable",
+            "variable": "ID Telegram",
+            "column": "A",
+            "comparison": "equal"
+          },
+          {
+            "type": "variable",
+            "variable": "Квест",
+            "column": "E",
+            "comparison": "equal"
+          }
+        ],
+        "var_map": [
+          {
+            "name": "ID Telegram",
+            "column": "A"
+          },
+          {
+            "name": "Имя",
+            "column": "B"
+          },
+          {
+            "name": "ID Leadtex",
+            "column": "C"
+          },
+          {
+            "name": "Дата",
+            "column": "D"
+          },
+          {
+            "name": "Телефон",
+            "column": "E"
+          },
+          {
+            "name": "bag_report",
+            "column": "F"
+          },
+          {
+            "name": "bag_scr",
+            "column": "G"
+          }
+        ],
+        "mode": "add_update"
+      }
+    },
+    "buttons": [
+      {
+        "text": "Записи не найдены",
+        "key": "not_found"
+      }
+    ]
+  },
+  {
+    "id": "s8",
+    "type": "script",
+    "name": "Главный сценарий",
+    "raw": {
+      "script": "0",
+      "script_name": "Главный сценарий"
+    }
+  },
+  {
+    "id": "s9",
+    "type": "start",
+    "main": true,
+    "next": "s3"
+  },
+  {
+    "id": "s10",
+    "type": "chain",
+    "messages": [
+      {
+        "text": "Вы попали в раздел обратной связи. \nДля решения вашей проблемы опишите свою проблему в сообщении."
+      }
+    ],
+    "save_answer_to": "bag_report",
+    "buttons": [
+      {
+        "text": "В главное меню",
+        "next": "s8"
+      },
+      {
+        "text": "Любая другая фраза",
+        "next": "s4"
+      }
+    ]
+  }
+]

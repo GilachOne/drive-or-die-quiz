@@ -1,0 +1,111 @@
+[
+  {
+    "id": "s1",
+    "type": "script",
+    "name": "quiz_master",
+    "raw": {
+      "script": "quiz_master"
+    }
+  },
+  {
+    "id": "s2",
+    "type": "chain",
+    "name": "Квест",
+    "messages": [
+      {
+        "text": "Выбери квест"
+      }
+    ],
+    "save_answer_to": "Квест",
+    "buttons": [
+      {
+        "text": "Квест 21 … Квест 40 (20 кнопок)",
+        "next": "s1"
+      }
+    ]
+  },
+  {
+    "id": "s3",
+    "type": "text",
+    "next": "s4",
+    "raw": {
+      "value": "Для начала нужно зарегистрироваться."
+    }
+  },
+  {
+    "id": "s4",
+    "type": "script",
+    "name": "Регистрация",
+    "raw": {
+      "script": "0",
+      "script_name": "Главный сценарий"
+    }
+  },
+  {
+    "id": "s5",
+    "type": "condition",
+    "name": "Не содержит Ник?",
+    "conditions": [
+      {
+        "type": "tag_excluded"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Да",
+        "key": "yes",
+        "next": "s3"
+      },
+      {
+        "text": "Нет",
+        "key": "no",
+        "next": "s8"
+      }
+    ]
+  },
+  {
+    "id": "s6",
+    "type": "variable_operation",
+    "next": "s7",
+    "vars": [
+      {
+        "boss": "нет"
+      }
+    ]
+  },
+  {
+    "id": "s7",
+    "type": "script",
+    "name": "quiz_master",
+    "raw": {
+      "script": "quiz_master"
+    }
+  },
+  {
+    "id": "s8",
+    "type": "chain",
+    "name": "Квест",
+    "messages": [
+      {
+        "text": "Выбери квест"
+      }
+    ],
+    "save_answer_to": "Квест",
+    "buttons": [
+      {
+        "text": "Квест 1 … Квест 20 (20 кнопок)",
+        "next": "s7"
+      },
+      {
+        "text": "Еще квесты",
+        "next": "s2"
+      }
+    ]
+  },
+  {
+    "id": "s9",
+    "type": "start",
+    "main": true,
+    "next": "s5"
+  }
+]

@@ -1,0 +1,221 @@
+[
+  {
+    "id": "s1",
+    "type": "http",
+    "name": "Викторина",
+    "http": {
+      "method": "post",
+      "content_type": "x-www-form-urlencoded",
+      "url": "https://app.leadteh.ru/api/v1/getListItems",
+      "save_to": [
+        {
+          "json_key": "data.{{ $счетчик }}.vopros",
+          "variable": "вопрос"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.otvet1",
+          "variable": "ответ1"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.otvet2",
+          "variable": "ответ2"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.otvet3",
+          "variable": "ответ3"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.otvet4",
+          "variable": "ответ4"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.po",
+          "variable": "по"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.varianty",
+          "variable": "варианты"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.otvet5",
+          "variable": "ответ5"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.kartinka.url",
+          "variable": "картинка"
+        }
+      ]
+    },
+    "buttons": [
+      {
+        "text": "Нет ответа от сервера",
+        "key": "http_timeout"
+      }
+    ]
+  },
+  {
+    "id": "s3",
+    "type": "text",
+    "next": "s4",
+    "raw": {
+      "value": "Для начала нужно зарегистрироваться."
+    }
+  },
+  {
+    "id": "s4",
+    "type": "script",
+    "name": "Регистрация",
+    "raw": {
+      "script": "0",
+      "script_name": "Главный сценарий"
+    }
+  },
+  {
+    "id": "s5",
+    "type": "condition",
+    "name": "Не содержит Ник?",
+    "conditions": [
+      {
+        "type": "tag_excluded"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Да",
+        "key": "yes",
+        "next": "s3"
+      },
+      {
+        "text": "Нет",
+        "key": "no",
+        "next": "s7"
+      }
+    ]
+  },
+  {
+    "id": "s7",
+    "type": "chain",
+    "messages": [
+      {
+        "text": "Выбери подходящий раздел каталога ⬇️"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Мерч",
+        "type": "inline_query_current"
+      },
+      {
+        "text": "Сертификаты",
+        "type": "inline_query_current"
+      }
+    ]
+  },
+  {
+    "id": "s8",
+    "type": "list_read_item",
+    "raw": {
+      "list_read_item": {
+        "title_field_id": "nazvanie",
+        "description_field_id": "opisanie",
+        "image_field_id": "foto",
+        "filters": [
+          {
+            "id": "nazvanie",
+            "term": "=",
+            "value": "{{ $Товар }}"
+          }
+        ],
+        "templates": [
+          {
+            "type": "image",
+            "value": "foto"
+          },
+          {
+            "type": "template",
+            "value": "*{{ nazvanie }}*\n\n{{ opisanie }}\n\nЦена: {{ drc_cost }},00 DRC"
+          }
+        ],
+        "is_shop": true,
+        "basket_template": "Добавить в корзину",
+        "price_field_id": "cena"
+      }
+    },
+    "buttons": [
+      {
+        "text": "Перейти в корзину",
+        "next": "s12"
+      },
+      {
+        "text": "Каталог",
+        "type": "inline_query_current"
+      }
+    ]
+  },
+  {
+    "id": "s9",
+    "type": "inline_telegram",
+    "next": "s8",
+    "raw": {
+      "inline_telegram": {
+        "tag_name": "merch",
+        "title_field_slug": "nazvanie",
+        "description_field_slug": "drc_cost",
+        "img_field_slug": "foto"
+      }
+    },
+    "save_answer_to": "Товар"
+  },
+  {
+    "id": "s10",
+    "type": "script",
+    "raw": {
+      "script": "0",
+      "script_name": "Главный сценарий"
+    }
+  },
+  {
+    "id": "s11",
+    "type": "chain",
+    "messages": [
+      {
+        "text": "Ваш заказ успешно оформлен!"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "В главное меню",
+        "next": "s10"
+      }
+    ]
+  },
+  {
+    "id": "s12",
+    "type": "cart",
+    "raw": {
+      "cart": {
+        "template": "{{ description }}\n\nКоличество: {{ amount }}\n\nСумма к оплате: {{ total_price }}",
+        "increment_template": "Увеличить {n}",
+        "decrement_template": "Уменьшить {n}",
+        "delete_template": "Удалить {n}",
+        "order_template": "Оформить заказ",
+        "payment_mode": "full_prepayment",
+        "message": "Итоговая стоимость всех товаров: {{ price }}"
+      }
+    },
+    "save_answer_to": "Заказ",
+    "buttons": [
+      {
+        "text": "Успешная оплата",
+        "key": "successful_payment",
+        "next": "s11"
+      }
+    ]
+  },
+  {
+    "id": "s13",
+    "type": "start",
+    "main": true,
+    "next": "s5"
+  }
+]

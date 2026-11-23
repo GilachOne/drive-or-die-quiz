@@ -1,0 +1,1029 @@
+[
+  {
+    "id": "s1",
+    "type": "http",
+    "name": "sendPhoto В бой!",
+    "next": "s20",
+    "http": {
+      "method": "post",
+      "content_type": "x-www-form-urlencoded",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/sendPhoto",
+      "save_to": [
+        {
+          "json_key": "result.message_id",
+          "variable": "boss_img_id"
+        }
+      ]
+    },
+    "buttons": [
+      {
+        "text": "В бой!",
+        "next": "s20"
+      },
+      {
+        "text": "Нет ответа от сервера",
+        "key": "http_timeout"
+      }
+    ]
+  },
+  {
+    "id": "s2",
+    "type": "variable_operation",
+    "name": "up_to_maxDRC",
+    "vars": {
+      "op": "math_2_0",
+      "var": "maxDRC",
+      "value": "10000 - y"
+    }
+  },
+  {
+    "id": "s3",
+    "type": "variable_operation",
+    "name": "maxDRC",
+    "next": "s4",
+    "vars": {
+      "op": "math_2_0",
+      "var": "maxDRC",
+      "value": "x + y"
+    }
+  },
+  {
+    "id": "s4",
+    "type": "variable_operation",
+    "name": "DRC",
+    "next": "s27",
+    "vars": {
+      "op": "math_2_0",
+      "var": "DRC",
+      "value": "x + y"
+    }
+  },
+  {
+    "id": "s5",
+    "type": "condition",
+    "conditions": [
+      {
+        "type": "variable_comparison",
+        "var": "up_to_maxDRC",
+        "op": "<",
+        "value": "DRC"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Да",
+        "key": "yes",
+        "next": "s3"
+      },
+      {
+        "text": "Нет",
+        "key": "no",
+        "next": "s28"
+      }
+    ]
+  },
+  {
+    "id": "s6",
+    "type": "google_sheet_reader",
+    "next": "s5",
+    "raw": {
+      "google_sheet_reader": {
+        "table_uuid": "https://docs.google.com/spreadsheets/d/<SHEET_ID>",
+        "sheet_uuid": "first_rating",
+        "map": [
+          {
+            "variable": "ID Telegram",
+            "column": "A"
+          },
+          {
+            "variable": "Квест",
+            "column": "E"
+          }
+        ],
+        "var_map": [
+          {
+            "name": "up_to_maxDRC",
+            "column": "g"
+          }
+        ]
+      }
+    },
+    "buttons": [
+      {
+        "text": "Записи не найдены",
+        "key": "not_found"
+      }
+    ]
+  },
+  {
+    "id": "s7",
+    "type": "chain",
+    "name": "Баланс",
+    "next": "s24",
+    "messages": [
+      {
+        "text": "Вы заработали + {{ $баллы }},00 DRC!\nВаш баланс : {{ $DRC}},00 DRC"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Продолжить",
+        "next": "s24"
+      }
+    ]
+  },
+  {
+    "id": "s8",
+    "type": "variable_operation",
+    "next": "s22",
+    "vars": {
+      "op": "free_value",
+      "var": "boss",
+      "value": "нет"
+    }
+  },
+  {
+    "id": "s9",
+    "type": "http",
+    "name": "sendPhoto_right",
+    "next": "s8",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/sendPhoto",
+      "save_to": [
+        {
+          "json_key": "result.message_id",
+          "variable": "right_id"
+        }
+      ]
+    }
+  },
+  {
+    "id": "s10",
+    "type": "variable_operation",
+    "name": "баллы + 5",
+    "next": "s9",
+    "vars": {
+      "op": "math",
+      "var": "баллы",
+      "value": "x + 5"
+    }
+  },
+  {
+    "id": "s11",
+    "type": "http",
+    "name": "sendPhoto_wrong",
+    "next": "s8",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/sendPhoto",
+      "save_to": [
+        {
+          "json_key": "result.message_id",
+          "variable": "right_id"
+        }
+      ]
+    }
+  },
+  {
+    "id": "s12",
+    "type": "http",
+    "name": "sendPoll4",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/sendPoll",
+      "save_to": [
+        {
+          "json_key": "result.message_id",
+          "variable": "msg_id"
+        }
+      ]
+    },
+    "buttons": [
+      {
+        "text": "далее",
+        "next": "s15"
+      }
+    ]
+  },
+  {
+    "id": "s13",
+    "type": "condition",
+    "name": "правильно?",
+    "conditions": [
+      {
+        "type": "variable_comparison",
+        "var": "правильно",
+        "op": "=",
+        "value": "1"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Да",
+        "key": "yes",
+        "next": "s10"
+      },
+      {
+        "text": "Нет",
+        "key": "no",
+        "next": "s11"
+      }
+    ]
+  },
+  {
+    "id": "s14",
+    "type": "http",
+    "name": "deleteMessages",
+    "next": "s13",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/deleteMessages"
+    }
+  },
+  {
+    "id": "s15",
+    "type": "http",
+    "name": "stopPoll",
+    "next": "s14",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/stopPoll",
+      "save_to": [
+        {
+          "json_key": "result.options.{{ $по }}.voter_count",
+          "variable": "правильно"
+        }
+      ]
+    }
+  },
+  {
+    "id": "s16",
+    "type": "variable_operation",
+    "name": "обработка правильного ответа",
+    "next": "s19",
+    "vars": {
+      "op": "math",
+      "var": "по",
+      "value": "x - 1"
+    }
+  },
+  {
+    "id": "s17",
+    "type": "http",
+    "name": "sendPoll3",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/sendPoll",
+      "save_to": [
+        {
+          "json_key": "result.message_id",
+          "variable": "msg_id"
+        }
+      ]
+    },
+    "buttons": [
+      {
+        "text": "далее",
+        "next": "s15"
+      }
+    ]
+  },
+  {
+    "id": "s18",
+    "type": "condition",
+    "name": "3 или 4 варианта?",
+    "conditions": [
+      {
+        "type": "variable_comparison",
+        "var": "3_ответа",
+        "op": "=",
+        "value": "{{ $варианты }}"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Да",
+        "key": "yes",
+        "next": "s17"
+      },
+      {
+        "text": "Нет",
+        "key": "no",
+        "next": "s12"
+      }
+    ]
+  },
+  {
+    "id": "s19",
+    "type": "variable_operation",
+    "name": "БОСС",
+    "next": "s18",
+    "vars": {
+      "op": "free_value",
+      "var": "босс",
+      "value": "Да"
+    }
+  },
+  {
+    "id": "s20",
+    "type": "http",
+    "name": "sendPhoto",
+    "next": "s16",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/sendPhoto",
+      "save_to": [
+        {
+          "json_key": "result.message_id",
+          "variable": "img_id"
+        }
+      ]
+    }
+  },
+  {
+    "id": "s21",
+    "type": "http",
+    "name": "Викторина (босс-вопрос)",
+    "next": "s1",
+    "http": {
+      "method": "post",
+      "url": "https://app.leadteh.ru/api/v1/getListItems",
+      "save_to": [
+        {
+          "json_key": "data.20.vopros",
+          "variable": "вопрос"
+        },
+        {
+          "json_key": "data.20.otvet1",
+          "variable": "ответ1"
+        },
+        {
+          "json_key": "data.20.otvet2",
+          "variable": "ответ2"
+        },
+        {
+          "json_key": "data.20.otvet3",
+          "variable": "ответ3"
+        },
+        {
+          "json_key": "data.20.otvet4",
+          "variable": "ответ4"
+        },
+        {
+          "json_key": "data.20.po",
+          "variable": "по"
+        },
+        {
+          "json_key": "data.20.varianty",
+          "variable": "варианты"
+        },
+        {
+          "json_key": "data.20.kartinka.url",
+          "variable": "картинка"
+        },
+        {
+          "json_key": "data.20.kommentarii",
+          "variable": "комм"
+        },
+        {
+          "json_key": "data.20.boss_pic.url",
+          "variable": "boss_pic"
+        },
+        {
+          "json_key": "data.20.boss_title",
+          "variable": "boss_title"
+        }
+      ]
+    }
+  },
+  {
+    "id": "s22",
+    "type": "condition",
+    "name": "есть босс?",
+    "conditions": [
+      {
+        "type": "variable_comparison",
+        "var": "boss",
+        "op": "=",
+        "value": "да"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Да",
+        "key": "yes",
+        "next": "s21"
+      },
+      {
+        "text": "Нет",
+        "key": "no",
+        "next": "s33"
+      }
+    ]
+  },
+  {
+    "id": "s23",
+    "type": "javascript",
+    "name": "Переход на следующий квест",
+    "next": "s58",
+    "js": "var quiz_number = getContactVariable(\"Квест\"); // \"Квест 1\"\nvar currentNumber = parseInt(quiz_number.replace(/\\D/g, ''));\nvar newQuizNumber = \"Квест \" + (currentNumber + 1);\nsetContactVariable(\"Квест\", newQuizNumber);"
+  },
+  {
+    "id": "s24",
+    "type": "javascript",
+    "name": "Проверка первой попытки (теги)",
+    "js": "// 1. Номер текущего квеста\nvar quiz_number = getContactVariable(\"Квест\");\nif (!quiz_number) {\n    goToBlock(BLOCK_REPEAT); // ошибка\n} else if (hasContactTag(quiz_number)) {\n    goToBlock(BLOCK_REPEAT); // квест уже пройден — в рейтинг не идёт\n} else {\n    setContactTag(quiz_number); // помечаем первую попытку\n    goToBlock(BLOCK_FIRST);     // пишем в first_rating\n}"
+  },
+  {
+    "id": "s25",
+    "type": "google_sheet_reader",
+    "next": "s57",
+    "raw": {
+      "google_sheet_reader": {
+        "table_uuid": "https://docs.google.com/spreadsheets/d/<SHEET_ID>",
+        "sheet_uuid": "shema_id",
+        "map": [
+          {
+            "variable": "Квест",
+            "column": "B"
+          }
+        ],
+        "var_map": [
+          {
+            "name": "shema",
+            "column": "D"
+          },
+          {
+            "name": "boss",
+            "column": "I"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "s26",
+    "type": "variable_operation",
+    "name": "DRC",
+    "next": "s27",
+    "vars": {
+      "op": "math_2_0",
+      "var": "DRC",
+      "value": "x + y"
+    }
+  },
+  {
+    "id": "s27",
+    "type": "google_sheet_extended_writer",
+    "name": "Зачисление DRC",
+    "next": "s7",
+    "raw": {
+      "google_sheet_extended_writer": {
+        "sheet_uuid": "users",
+        "map": [
+          {
+            "variable": "Телефон",
+            "column": "B"
+          },
+          {
+            "variable": "Ник",
+            "column": "C"
+          }
+        ],
+        "var_map": [
+          {
+            "name": "DRC",
+            "column": "E"
+          },
+          {
+            "name": "maxDRC",
+            "column": "F"
+          }
+        ],
+        "mode": "update_note"
+      }
+    }
+  },
+  {
+    "id": "s28",
+    "type": "variable_operation",
+    "name": "maxDRC",
+    "next": "s26",
+    "vars": {
+      "op": "math_2_0",
+      "var": "maxDRC",
+      "value": "x + y"
+    }
+  },
+  {
+    "id": "s29",
+    "type": "chain",
+    "name": "без единой ошибки",
+    "messages": [
+      {
+        "text": "Вау!🤩 Ты прошел без единой ошибки и получаешь дополнительно 3 драйвкоина!💰"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Продолжить",
+        "next": "s22"
+      }
+    ]
+  },
+  {
+    "id": "s30",
+    "type": "variable_operation",
+    "name": "баллы + 3",
+    "next": "s29",
+    "vars": {
+      "op": "math",
+      "var": "баллы",
+      "value": "x + 3"
+    }
+  },
+  {
+    "id": "s31",
+    "type": "condition",
+    "name": "все ответы правильные?",
+    "conditions": [
+      {
+        "type": "variable_comparison",
+        "var": "баллы",
+        "op": ">=",
+        "value": "20"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Да",
+        "key": "yes",
+        "next": "s30"
+      },
+      {
+        "text": "Нет",
+        "key": "no",
+        "next": "s22"
+      }
+    ]
+  },
+  {
+    "id": "s32",
+    "type": "google_sheet_extended_writer",
+    "name": "last_rating",
+    "next": "s48",
+    "raw": {
+      "google_sheet_extended_writer": {
+        "sheet_uuid": "last_rating",
+        "map": [
+          {
+            "variable": "ID Telegram",
+            "column": "A"
+          },
+          {
+            "variable": "Квест",
+            "column": "E"
+          }
+        ],
+        "var_map": [
+          "ID Telegram",
+          "Ник",
+          "ID Leadtex",
+          "Дата",
+          "Квест",
+          "баллы",
+          "ошибка",
+          "Дата старта",
+          "Телефон"
+        ],
+        "mode": "add_update"
+      }
+    }
+  },
+  {
+    "id": "s33",
+    "type": "variable_operation",
+    "name": "дата",
+    "next": "s28",
+    "vars": {
+      "op": "free_value",
+      "var": "Дата",
+      "value": "{{date(\"d.m.Y H:i:s\",\"3 hours\")}}"
+    }
+  },
+  {
+    "id": "s34",
+    "type": "chain",
+    "name": "Повторная попытка",
+    "messages": [
+      {
+        "text": "Квест пройден!\nЗаработанные баллы за текущую попытку: {{ $баллы }}"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Главное меню",
+        "next": "s47"
+      },
+      {
+        "text": "Выбор квеста",
+        "next": "s38"
+      }
+    ]
+  },
+  {
+    "id": "s35",
+    "type": "google_sheet_extended_writer",
+    "name": "last_rating",
+    "next": "s34",
+    "raw": {
+      "google_sheet_extended_writer": {
+        "sheet_uuid": "last_rating",
+        "mode": "add_update"
+      }
+    }
+  },
+  {
+    "id": "s36",
+    "type": "google_sheet_reader",
+    "next": "s35",
+    "raw": {
+      "google_sheet_reader": {
+        "sheet_uuid": "users",
+        "var_map": [
+          {
+            "name": "up_to_maxDRC",
+            "column": "G"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "s37",
+    "type": "google_sheet_extended_writer",
+    "name": "first_rating",
+    "next": "s32",
+    "raw": {
+      "google_sheet_extended_writer": {
+        "sheet_uuid": "first_rating",
+        "var_map": [
+          "ID Telegram",
+          "Ник",
+          "ID Leadtex",
+          "Дата",
+          "Квест",
+          "баллы",
+          "ошибка",
+          "Дата старта",
+          "Телефон"
+        ],
+        "mode": "add_note"
+      }
+    }
+  },
+  {
+    "id": "s38",
+    "type": "script",
+    "name": "Quiz_menu",
+    "raw": {
+      "script": "quiz_menu"
+    }
+  },
+  {
+    "id": "s39",
+    "type": "http",
+    "name": "sendPhoto_wrong",
+    "next": "s44",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/sendPhoto"
+    }
+  },
+  {
+    "id": "s40",
+    "type": "http",
+    "name": "sendPhoto_right",
+    "next": "s50",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/sendPhoto"
+    }
+  },
+  {
+    "id": "s41",
+    "type": "http",
+    "name": "Викторина: следующий вопрос",
+    "next": "s54",
+    "http": {
+      "method": "post",
+      "url": "https://app.leadteh.ru/api/v1/getListItems",
+      "save_to": [
+        {
+          "json_key": "data.{{ $счетчик }}.vopros",
+          "variable": "вопрос"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.otvet1",
+          "variable": "ответ1"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.otvet2",
+          "variable": "ответ2"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.otvet3",
+          "variable": "ответ3"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.otvet4",
+          "variable": "ответ4"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.po",
+          "variable": "по"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.varianty",
+          "variable": "варианты"
+        },
+        {
+          "json_key": "data.{{ $счетчик }}.kartinka.url",
+          "variable": "картинка"
+        }
+      ]
+    }
+  },
+  {
+    "id": "s42",
+    "type": "http",
+    "name": "sendPoll3",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/sendPoll"
+    },
+    "buttons": [
+      {
+        "text": "далее",
+        "next": "s53"
+      }
+    ]
+  },
+  {
+    "id": "s43",
+    "type": "condition",
+    "name": "3 или 4 варианта?",
+    "conditions": [
+      {
+        "type": "variable_comparison",
+        "var": "3_ответа",
+        "op": "=",
+        "value": "{{ $варианты }}"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Да",
+        "key": "yes",
+        "next": "s42"
+      },
+      {
+        "text": "Нет",
+        "key": "no",
+        "next": "s55"
+      }
+    ]
+  },
+  {
+    "id": "s44",
+    "type": "variable_operation",
+    "name": "ошибка + 1",
+    "next": "s45",
+    "vars": {
+      "op": "math",
+      "var": "ошибка",
+      "value": "x + 1"
+    }
+  },
+  {
+    "id": "s45",
+    "type": "variable_operation",
+    "name": "счетчик + 1",
+    "next": "s49",
+    "vars": {
+      "op": "math",
+      "var": "счетчик",
+      "value": "x + 1"
+    }
+  },
+  {
+    "id": "s46",
+    "type": "variable_operation",
+    "name": "индекс правильного ответа (с 0)",
+    "next": "s43",
+    "vars": {
+      "op": "math",
+      "var": "по",
+      "value": "x - 1"
+    }
+  },
+  {
+    "id": "s47",
+    "type": "script",
+    "raw": {
+      "script": "0",
+      "script_name": "Главный сценарий"
+    }
+  },
+  {
+    "id": "s48",
+    "type": "chain",
+    "name": "Первая попытка",
+    "messages": [
+      {
+        "text": "Квест пройден!\nЗаработанные баллы за текущую попытку: {{ $баллы }}\nВаш рейтинг первой попытки: {{ $пр }}"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Главное меню",
+        "next": "s47"
+      },
+      {
+        "text": "Выбор квеста",
+        "next": "s38"
+      },
+      {
+        "text": "Следующий квест",
+        "next": "s23"
+      }
+    ]
+  },
+  {
+    "id": "s49",
+    "type": "condition",
+    "name": "вопросы закончились?",
+    "conditions": [
+      {
+        "type": "variable_comparison",
+        "var": "счетчик",
+        "op": "=",
+        "value": "20"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Да",
+        "key": "yes",
+        "next": "s31"
+      },
+      {
+        "text": "Нет",
+        "key": "no",
+        "next": "s41"
+      }
+    ]
+  },
+  {
+    "id": "s50",
+    "type": "variable_operation",
+    "name": "баллы + 1",
+    "next": "s45",
+    "vars": {
+      "op": "math",
+      "var": "баллы",
+      "value": "x + 1"
+    }
+  },
+  {
+    "id": "s51",
+    "type": "condition",
+    "name": "правильно?",
+    "conditions": [
+      {
+        "type": "variable_comparison",
+        "var": "правильно",
+        "op": "=",
+        "value": "1"
+      }
+    ],
+    "buttons": [
+      {
+        "text": "Да",
+        "key": "yes",
+        "next": "s40"
+      },
+      {
+        "text": "Нет",
+        "key": "no",
+        "next": "s39"
+      }
+    ]
+  },
+  {
+    "id": "s52",
+    "type": "http",
+    "name": "deleteMessages",
+    "next": "s51",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/deleteMessages"
+    }
+  },
+  {
+    "id": "s53",
+    "type": "http",
+    "name": "stopPoll",
+    "next": "s52",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/stopPoll",
+      "save_to": [
+        {
+          "json_key": "result.options.{{ $по }}.voter_count",
+          "variable": "правильно"
+        }
+      ]
+    }
+  },
+  {
+    "id": "s54",
+    "type": "http",
+    "name": "sendPhoto (картинка вопроса)",
+    "next": "s46",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/sendPhoto",
+      "save_to": [
+        {
+          "json_key": "result.message_id",
+          "variable": "img_id"
+        }
+      ]
+    }
+  },
+  {
+    "id": "s55",
+    "type": "http",
+    "name": "sendPoll4",
+    "http": {
+      "method": "post",
+      "url": "https://api.telegram.org/bot<TG_BOT_TOKEN>/sendPoll"
+    },
+    "buttons": [
+      {
+        "text": "далее",
+        "next": "s53"
+      }
+    ]
+  },
+  {
+    "id": "s56",
+    "type": "variable_operation",
+    "name": "обнуление переменных",
+    "next": "s25",
+    "vars": [
+      {
+        "баллы": "0"
+      },
+      {
+        "счетчик": "0"
+      },
+      {
+        "по": "0"
+      },
+      {
+        "ошибка": "0"
+      },
+      {
+        "3_ответа": "3"
+      },
+      {
+        "Дата старта": "{{date(\"d.m.Y H:i:s\",\"3 hours\")}}"
+      },
+      {
+        "Период": "40"
+      },
+      {
+        "тотал": "20"
+      }
+    ]
+  },
+  {
+    "id": "s57",
+    "type": "chain",
+    "next": "s41",
+    "messages": [
+      {
+        "text": "Удачи😉"
+      }
+    ]
+  },
+  {
+    "id": "s58",
+    "type": "start",
+    "main": true,
+    "next": "s56"
+  }
+]
