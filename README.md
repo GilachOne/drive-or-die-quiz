@@ -4,6 +4,13 @@
 
 > Сценарии спроектированы и собраны мной вручную в конструкторе LeadTeh: логика, тексты, интеграции с CRM и Google Sheets.
 
+<table><tr>
+<td><img src="screenshots/tg-01-intro.jpg" width="200" alt="Интро"></td>
+<td><img src="screenshots/tg-02-menu.jpg" width="200" alt="Главное меню"></td>
+<td><img src="screenshots/tg-03-question.jpg" width="200" alt="Вопрос-опрос"></td>
+<td><img src="screenshots/tg-04-wrong-answer.jpg" width="200" alt="Реакция на ошибку"></td>
+</tr></table>
+
 ## Механика
 
 - 20 вопросов в квесте, вопрос показывается **нативным опросом Telegram** с картинкой.
@@ -38,6 +45,15 @@ flowchart TD
   S -- да --> T[first_rating + тег квеста]
   S -- нет --> U[last_rating]
 ```
+
+Движок в конструкторе LeadTeh — общий вид и фрагмент с sendPoll / stopPoll:
+
+![Движок quiz_master — общий вид](screenshots/scheme-quiz-master.jpg)
+![Движок quiz_master — фрагмент](screenshots/scheme-quiz-master-detail.jpg)
+
+Главное меню:
+
+![Главное меню в LeadTeh](screenshots/scheme-main-menu.jpg)
 
 Главный трюк — **определение правильного ответа без кнопок**: бот отправляет опрос от имени бота, после ответа закрывает его `stopPoll` и читает `result.options[по].voter_count` — если 1, игрок выбрал правильный вариант.
 
